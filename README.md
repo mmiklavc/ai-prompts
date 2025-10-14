@@ -72,3 +72,9 @@ cp -r out/default/.cursor/rules .cursor/
 - Overlays in `profiles/` let you customize without touching `core/` or `adapters/`.  
 - Add new languages by dropping a JSON adapter in `adapters/` and rebuilding.  
 
+---
+
+> Portions of this repository (including documentation and rule scaffolding) were generated or refined with the assistance of AI tools, such as ChatGPT (GPT-5).
+> All generated content has been reviewed by human maintainers.
+> See [LICENSE](./LICENSE) for full licensing details.
+
