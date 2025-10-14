@@ -3,16 +3,16 @@
 A modular, profile-driven system for generating **AI coding rules and prompts** across a polyglot stack — Go, Python, Java/Maven, Shell, Make, Helm, JSON, and gRPC.
 
 This repository produces:
-- **Cursor rules** (machine-readable JSON)
+- **Cursor rules** (project-local **`.mdc`** files with YAML front-matter + Markdown body)
 - **Claude / Gemini system prompts** (single concatenated text)
-- **Human-readable docs** (Markdown bootstrap prompts)
+- **Human-readable bootstrap docs** (Markdown prompt set)
 
 ---
 
 ## Structure
 
 - `core/` – universal workspace contract  
-- `adapters/` – per-language rule adapters  
+- `adapters/` – per-language rule adapters (SoT, JSON)  
 - `profiles/` – optional overlays (org / project / editor)  
 - `scripts/` – deterministic build + validation  
 - `dev-tools/` – asdf setup + pinned tool versions  
@@ -26,50 +26,74 @@ This repository produces:
 ```bash
 make setup          # install asdf plugins
 make tools          # install pinned tool versions
-make rules          # build Cursor + Claude + Gemini outputs
-make validate       # schema + routing validation
+
+# Build all current emitters
+make rules          # → out/cursor/.cursor/rules/*.mdc, out/claude/system-prompt.txt, out/gemini/system-prompt.txt
+
+# Validate schemas + sanity checks
+make validate
 ```
 
 ### Build a single editor output
 
 ```bash
-make rules-cursor   # → out/default/.cursor/rules
+make rules-cursor   # → out/cursor/.cursor/rules/*.mdc
 make rules-claude   # → out/claude/system-prompt.txt
 make rules-gemini   # → out/gemini/system-prompt.txt
+```
+
+You can override destinations:
+```bash
+make rules-cursor OUT_CURSOR=out/my-cursor
 ```
 
 ---
 
 ## Using in Cursor
 
+Place the generated rules in your workspace root:
+
 ```bash
 mkdir -p .cursor
-cp -r out/default/.cursor/rules .cursor/
+cp -r out/cursor/.cursor/rules .cursor/
 ```
+
+Cursor loads rules from `.cursor/rules/*.mdc` automatically (no legacy `.cursorrules` needed).
 
 ---
 
 ## Outputs
 
-- `out/default/.cursor/rules/` – Cursor JSON rule set  
+- `out/cursor/.cursor/rules/*.mdc` – Cursor rule files (MDC format)  
 - `out/claude/system-prompt.txt` – Claude system prompt  
 - `out/gemini/system-prompt.txt` – Gemini system prompt  
 - `docs/dev/bootstrap/` – reference bootstrap docs (committed)
 
 ---
 
-## Requirements
+## CLI (scripts/build.py)
 
-- macOS/Linux, `make`
-- Python ≥ 3.10
-- `asdf` (tool versions), `jq`, optional `tree`
+```text
+--editor   cursor|claude|gemini   (default: cursor)
+--org      optional org overlay   (profiles/org/<name>.overlay.json)
+--project  optional project overlay (profiles/project/<name>.overlay.json)
+--out      output dir (default: out/<editor>)
+```
+
+Example:
+```bash
+python scripts/build.py --editor=cursor --out out/cursor
+python scripts/build.py --editor=claude --out out/claude
+python scripts/build.py --editor=gemini --out out/gemini
+```
 
 ---
 
 ## Notes
 
-- Builds are deterministic (stable ordering + content hashing).  
-- Overlays in `profiles/` let you customize without touching `core/` or `adapters/`.  
+- **Source of truth** is JSON in `core/` and `adapters/`; build emits Cursor-native **`.mdc`** files.  
+- Overlays in `profiles/` let you customize without touching `core/`/`adapters/`.  
+- Builds are deterministic (stable ordering + content hashing in `manifest.json`).  
 - Add new languages by dropping a JSON adapter in `adapters/` and rebuilding.  
 
 ---
