@@ -19,7 +19,7 @@ SHELL := bash
 PY          ?= python
 ORG         ?=
 PROJECT     ?=
-OUT_CURSOR  ?= out/default
+OUT_CURSOR  ?= out/cursor
 OUT_CLAUDE  ?= out/claude
 OUT_GEMINI  ?= out/gemini
 

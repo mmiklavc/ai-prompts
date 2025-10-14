@@ -75,11 +75,35 @@ def sha256_dir(path: pathlib.Path) -> str:
     return h.hexdigest()
 
 def main() -> None:
-    ap = argparse.ArgumentParser()
-    ap.add_argument("--editor", choices=["cursor", "claude", "gemini"], default="cursor")
-    ap.add_argument("--org", default=None)
-    ap.add_argument("--project", default=None)
-    ap.add_argument("--out", default="out/default")
+    # ap = argparse.ArgumentParser()
+    # ap.add_argument("--editor", choices=["cursor", "claude", "gemini"], default="cursor")
+    # ap.add_argument("--org", default=None)
+    # ap.add_argument("--project", default=None)
+    # ap.add_argument("--out", default=None, help="Output directory (defaults to out/<editor>)")
+    ap = argparse.ArgumentParser(
+        description="Build polyglot AI rule sets and system prompts (Cursor, Claude, Gemini)."
+    )
+    ap.add_argument(
+        "--editor",
+        choices=["cursor", "claude", "gemini"],
+        default="cursor",
+        help="Editor output target (cursor: JSON rules, claude/gemini: system prompt). Default: cursor.",
+    )
+    ap.add_argument(
+        "--org",
+        default=None,
+        help="Optional organization overlay name (matches profiles/org/<name>.overlay.json).",
+    )
+    ap.add_argument(
+        "--project",
+        default=None,
+        help="Optional project overlay name (matches profiles/project/<name>.overlay.json).",
+    )
+    ap.add_argument(
+        "--out",
+        default=None,
+        help="Output directory (defaults to out/<editor> if not specified).",
+    )
     args = ap.parse_args()
 
     # Load & index
@@ -101,7 +125,7 @@ def main() -> None:
     rules: List[Dict[str, Any]] = sorted(rules_by_name.values(), key=lambda r: r["name"].lower())
 
     # Fresh outdir
-    outdir = pathlib.Path(args.out)
+    outdir = pathlib.Path(args.out or f"out/{args.editor}")
     if outdir.exists():
         shutil.rmtree(outdir)
     outdir.mkdir(parents=True, exist_ok=True)
