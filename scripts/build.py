@@ -46,6 +46,21 @@ def write_claude_prompt(outdir, rules):
     with open(outp / "system-prompt.txt", "w", encoding="utf-8") as f:
         f.write("\n".join(prompt))
 
+def write_gemini_prompt(outdir, rules):
+    prompt = []
+    ws = next(r for r in rules if r["name"].startswith("Workspace"))
+    prompt.append("# Workspace Contract\n")
+    prompt.append(ws["content"].strip())
+    for r in rules:
+        if r is ws:
+            continue
+        prompt.append(f"\n\n# {r['name']}\n")
+        prompt.append(r["content"].strip())
+    outp = pathlib.Path(outdir) / "out" / "gemini"
+    outp.mkdir(parents=True, exist_ok=True)
+    with open(outp / "system-prompt.txt", "w", encoding="utf-8") as f:
+        f.write("\n".join(prompt))
+
 def sha256_dir(path):
     import hashlib
     h = hashlib.sha256()
@@ -56,7 +71,7 @@ def sha256_dir(path):
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("--editor", choices=["cursor","claude"], default="cursor")
+    ap.add_argument("--editor", choices=["cursor","claude","gemini"], default="cursor")
     ap.add_argument("--org", default=None)
     ap.add_argument("--project", default=None)
     ap.add_argument("--out", default="out/default")
@@ -86,9 +101,14 @@ def main():
     outdir.mkdir(parents=True, exist_ok=True)
 
     if args.editor == "cursor":
-        rules_dir = write_cursor_rules(outdir, rules)
-    else:
+        write_cursor_rules(outdir, rules)
+        sha_path = outdir / ".cursor" / "rules"
+    elif args.editor == "claude":
         write_claude_prompt(outdir, rules)
+        sha_path = outdir / "out" / "claude"
+    elif args.editor == "gemini":
+        write_gemini_prompt(outdir, rules)
+        sha_path = outdir / "out" / "gemini"
 
     manifest = {
         "generated_at": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
@@ -97,10 +117,7 @@ def main():
         "project": args.project,
         "rule_count": len(rules),
     }
-    if args.editor == "cursor":
-        manifest["sha256"] = sha256_dir(outdir / ".cursor" / "rules")
-    else:
-        manifest["sha256"] = sha256_dir(outdir / "out" / "claude")
+    manifest["sha256"] = sha256_dir(sha_path)
     with open(outdir / "manifest.json", "w", encoding="utf-8") as f:
         json.dump(manifest, f, indent=2)
 

@@ -1,0 +1,16 @@
+{
+  "overlay_name": "gemini-min",
+  "description": "Tighten formatting for Gemini CLI output.",
+  "overrides": [
+    {
+      "target": "Workspace Contract (Universal)",
+      "append_content": "\nGuidance: Keep answers concise and directly actionable. Prefer bullets and code diffs."
+    },
+    {
+      "target": "Go Adapter",
+      "append_content": "\nNote: Prefer short bullets; avoid long rationale; include Runbook at end."
+    }
+    // Repeat if you want similar 'Note:' lines for Python/Java/etc., or leave just the workspace tweak.
+  ]
+}
+
