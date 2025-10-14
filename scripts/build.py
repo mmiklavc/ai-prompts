@@ -65,8 +65,9 @@ def main():
     core = load_jsons(ROOT / "core")
     adapters = load_jsons(ROOT / "adapters")
 
-    rules = [j for _, j in core] + [j for _, j in adapters]
-    rules_by_name = index_by_name(rules)
+    items = core + adapters
+    rules_by_name = index_by_name(items)
+    rules = list(rules_by_name.values())
 
     if args.org:
         path = ROOT / "profiles" / "org" / f"{args.org}.overlay.json"
