@@ -1,0 +1,17 @@
+{
+  "overlay_name": "analytics-monorepo",
+  "description": "Project-specific matches and commands.",
+  "overrides": [
+    {
+      "target": "Go Adapter",
+      "append_content": "\nProject: use `govulncheck ./...` mandatory.\n"
+    },
+    {
+      "target": "Python Adapter",
+      "append_content": "\nProject: enforce `mypy --strict` on ./services/ingest.\n",
+      "add_matches": [
+        "services/ingest/**/*.py"
+      ]
+    }
+  ]
+}

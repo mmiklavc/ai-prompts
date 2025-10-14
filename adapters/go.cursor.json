@@ -1,0 +1,10 @@
+{
+  "name": "GO Adapter",
+  "description": "Adapter rules for this stack.",
+  "matches": [
+    "**/*.go",
+    "go.mod",
+    "go.sum"
+  ],
+  "content": "# Go Adapter\n\n**Idioms**\n- Effective Go; early returns; zero-value-usable types; minimal interfaces; sync public APIs; internal concurrency; doc exported names.\n**Errors**: return + wrap with `%w`; use `errors.Is/As`; actionable context.\n**Concurrency**: `context.Context` at boundaries; avoid goroutine leaks; prefer owned goroutines + channels; verify with `-race`.\n**Testing**: table-driven; small; fakes; deterministic; add benchmarks if perf-sensitive.\n**Runbook**\n```\ngo fmt ./...\ngo vet ./...\ngo test ./... -race -cover\nstaticcheck ./...      # if available\ngovulncheck ./...      # if available\n```"
+}

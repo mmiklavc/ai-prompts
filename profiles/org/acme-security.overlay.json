@@ -1,0 +1,17 @@
+{
+  "overlay_name": "acme-security",
+  "description": "Stricter security logging and secrets redaction; narrows shell matches to scripts/.",
+  "overrides": [
+    {
+      "target": "Shell/Bash Adapter",
+      "append_content": "\n**ACME policy**: Disallow `curl | sh`, require checksums; forbid `set +e`.\n",
+      "add_matches": [
+        "scripts/**/*.sh"
+      ]
+    },
+    {
+      "target": "Workspace Contract (Universal)",
+      "append_content": "\n**ACME policy**: All external calls must have explicit timeouts; redact PII.\n"
+    }
+  ]
+}

@@ -1,0 +1,12 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Cursor Rule",
+  "type": "object",
+  "properties": {
+    "name": {"type":"string"},
+    "description": {"type":"string"},
+    "matches": {"type":"array","items":{"type":"string"}},
+    "content": {"type":"string"}
+  },
+  "required": ["name","description","matches","content"]
+}

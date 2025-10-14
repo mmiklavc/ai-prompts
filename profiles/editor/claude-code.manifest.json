@@ -1,0 +1,5 @@
+{
+  "editor": "claude-code",
+  "description": "Emit one concatenated system prompt for Claude Code.",
+  "output": "out/claude/system-prompt.txt"
+}

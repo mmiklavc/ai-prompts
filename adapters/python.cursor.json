@@ -1,0 +1,10 @@
+{
+  "name": "PYTHON Adapter",
+  "description": "Adapter rules for this stack.",
+  "matches": [
+    "**/*.py",
+    "pyproject.toml",
+    "requirements*.txt"
+  ],
+  "content": "# Python Adapter\n\n**Style & typing**: PEP 8, PEP 257 docstrings, type hints; mypy (strict on touched modules); prefer dataclasses.\n**Testing**: pytest with fixtures/parametrize; tmp_path/monkeypatch; avoid real network/disk I/O.\n**Lint/Format/Type**: ruff, black, mypy.\n**Runbook**\n```\nruff check .\nblack .\nmypy .\npytest -q\n```"
+}

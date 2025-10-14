@@ -1,0 +1,8 @@
+{
+  "name": "gRPC / Protobuf Adapter",
+  "description": "Adapter rules for this stack.",
+  "matches": [
+    "**/*.proto"
+  ],
+  "content": "# gRPC / Protobuf Adapter\n\n**Design**: proto3 style (names, packages, field numbering). Choose unary vs streaming deliberately; require deadlines/timeouts on RPCs.\n**Versioning**: additive changes; reserve fields; deprecate rather than repurpose; bump package/version for breaking changes.\n**Runbook**\n```\n# Generate stubs for the project's languages\nprotoc --proto_path=. --go_out=. --go-grpc_out=. path/to/*.proto   # example for Go\n```\n**Perf**: follow gRPC performance best practices (pooling, message sizes, compression when appropriate)."
+}

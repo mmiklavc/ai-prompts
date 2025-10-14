@@ -1,0 +1,9 @@
+{
+  "name": "JAVA Adapter",
+  "description": "Adapter rules for this stack.",
+  "matches": [
+    "**/*.java",
+    "pom.xml"
+  ],
+  "content": "# Java (Maven) Adapter\n\n**Style**: Google Java Style; prefer `google-java-format`. Small, cohesive classes; avoid static singletons.\n**Testing**: JUnit 5 (Jupiter), parameterized tests; Mockito for fakes.\n**Maven**: conventional layout; sensible plugin config; keep deps scoped/pinned.\n**Runbook**\n```\nmvn -q -DskipTests=false test\nmvn -q -T1C verify\nmvn -q spotbugs:check checkstyle:check pmd:check   # if configured\n```"
+}

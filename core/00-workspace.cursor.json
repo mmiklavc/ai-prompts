@@ -1,0 +1,8 @@
+{
+  "name": "Workspace Contract (Universal)",
+  "description": "Universal deliverables, security/testing defaults, CI/Make expectations. Always included.",
+  "matches": [
+    "**/*"
+  ],
+  "content": "# Workspace Contract (Universal)\n\n**Deliverables (strict order)**\n1) Plan (3\u20136 bullets)\n2) Changes (per-file `diff` or full files)\n3) Tests (unit + param; add bench if perf-sensitive)\n4) Runbook (exact format/lint/test/build commands for stacks touched)\n5) Notes (short rationale; API/migration; cancellation/cleanup; security/perf)\n\n**Global principles**\n- Clarity over cleverness; small functions; isolate helpers\n- Security: validate inputs; sanitize paths; never log secrets; timeouts & resource bounds\n- Testing: hermetic; deterministic seeds; fakes over real I/O\n- Dependencies: avoid adding; if needed, justify and pin\n- CI/Make: reuse existing targets (`format|lint|test|build`). If missing, propose minimal ones."
+}

@@ -1,0 +1,29 @@
+name: CI
+on: [push, pull_request]
+jobs:
+  build-validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Build default
+        run: |
+          python scripts/build.py --editor=cursor --out out/default
+          python scripts/build.py --editor=cursor --org=acme-security --project=analytics-monorepo --out out/pci
+      - name: Validate
+        run: python scripts/validate.py --all
+      - name: Show outputs
+        run: |
+          echo "::group::tree out"
+          python - <<'PY'
+import os
+for root, dirs, files in os.walk('out'):
+    level = root.replace('out','').count(os.sep)
+    indent = '  ' * level
+    print(f"{indent}{os.path.basename(root)}/")
+    for f in files:
+        print(f"{indent}  {f}")
+PY
+          echo "::endgroup::"

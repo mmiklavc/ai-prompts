@@ -1,0 +1,9 @@
+{
+  "name": "MAKE Adapter",
+  "description": "Adapter rules for this stack.",
+  "matches": [
+    "Makefile",
+    "**/*.mk"
+  ],
+  "content": "# Make Adapter\n\n**Principles**: targets produce files; accurate deps; no hidden state; `.PHONY` for non-file targets; parallel-safe rules.\n**Runbook**\n```\nmake format\nmake lint\nmake test\nmake build\n```\nIf absent, propose minimal targets composed from language adapters."
+}

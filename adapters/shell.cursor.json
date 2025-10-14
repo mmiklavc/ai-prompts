@@ -1,0 +1,8 @@
+{
+  "name": "SHELL Adapter",
+  "description": "Adapter rules for this stack.",
+  "matches": [
+    "**/*.sh"
+  ],
+  "content": "# Shell/Bash Adapter\n\n**Shebang & strict mode**: `#!/usr/bin/env bash` and `set -euo pipefail`; quote variables; trap cleanup; avoid UUOC; portability first.\n**Lint/Format**: ShellCheck + shfmt.\n**Runbook**\n```\nshellcheck **/*.sh\nshfmt -w .\n```"
+}

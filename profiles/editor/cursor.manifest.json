@@ -1,0 +1,5 @@
+{
+  "editor": "cursor",
+  "description": "Emit .cursor/rules from core+adapters+overlays.",
+  "output": ".cursor/rules"
+}

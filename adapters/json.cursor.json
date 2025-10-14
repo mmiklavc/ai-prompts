@@ -1,0 +1,9 @@
+{
+  "name": "JSON Adapter",
+  "description": "Adapter rules for this stack.",
+  "matches": [
+    "**/*.json",
+    "**/*.schema.json"
+  ],
+  "content": "# JSON Adapter\n\n**Rules**: RFC 8259 compliance; define JSON Schema (2020-12) for contracts; keep schemas near producers.\n**Runbook**\n```\njq -e . <file.json> > /dev/null\n# run the project's schema validator for *.schema.json if configured\n```"
+}

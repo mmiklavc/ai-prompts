@@ -1,0 +1,10 @@
+{
+  "name": "HELM Adapter",
+  "description": "Adapter rules for this stack.",
+  "matches": [
+    "charts/**",
+    "Chart.yaml",
+    "values*.yaml"
+  ],
+  "content": "# Helm Adapter\n\n**Guidelines**: sane chart structure; values via `values.yaml`; no secrets committed; document required values.\n**Validate/Templates**\n```\nhelm lint ./charts/<name>\nhelm template ./charts/<name> --debug --dry-run\n```\nRecommend schema validation/kubeconform if present."
+}
