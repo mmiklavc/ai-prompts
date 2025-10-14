@@ -1,0 +1,8 @@
+# languages/tooling pinned for local + CI
+python      3.11.14
+jq          1.8.1
+shellcheck  0.11.0
+shfmt       3.12.0
+yamllint    1.37.1
+# can be commented out if using homebrew
+tree     2.2.1
