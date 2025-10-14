@@ -5,5 +5,5 @@
     "Makefile",
     "**/*.mk"
   ],
-  "content": "# Make Adapter\n\n**Principles**: targets produce files; accurate deps; no hidden state; `.PHONY` for non-file targets; parallel-safe rules.\n**Runbook**\n```\nmake format\nmake lint\nmake test\nmake build\n```\nIf absent, propose minimal targets composed from language adapters."
+  "content": "# Make Adapter\n\n**Principles**\n- Targets produce files; accurate dependencies; no hidden state; `.PHONY` for non-file targets; rules must be parallel-safe.\n\n**Runbook**\n```\nmake format\nmake lint\nmake test\nmake build\n```\n\n**Formatting**\n- Tabs for recipes; keep variables and target names consistent.\n\n**References**\n- GNU Make Manual — https://www.gnu.org/software/make/manual/make.html\n"
 }

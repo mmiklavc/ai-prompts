@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-import argparse, json, shutil, time, pathlib, hashlib
+import argparse, json, shutil, time, pathlib, hashlib, re
 from typing import Dict, List, Tuple, Any
 
 ROOT = pathlib.Path(__file__).resolve().parents[1]
@@ -34,17 +34,65 @@ def _require_workspace(rules: List[Dict[str, Any]]) -> Dict[str, Any]:
     for r in rules:
         if r["name"].startswith(WORKSPACE_PREFIX):
             return r
-    raise SystemExit(f"ERROR: No rule found with name starting '{WORKSPACE_PREFIX}'. "
-                     f"Add a workspace contract rule (e.g., 'Workspace Contract (Universal)').")
+    raise SystemExit(
+        f"ERROR: No rule found with name starting '{WORKSPACE_PREFIX}'. "
+        f"Add a workspace contract rule (e.g., 'Workspace Contract (Universal)')."
+    )
+
+# ---------- Cursor (.mdc) emission helpers ----------
+
+def _slugify(name: str) -> str:
+    """
+    Make a tidy kebab-case slug for filenames.
+    - lowercases
+    - converts spaces & slashes to single dash
+    - collapses duplicate dashes
+    - removes characters outside [a-z0-9-]
+    """
+    s = name.lower()
+    s = re.sub(r"[\\/]+", "-", s)
+    s = re.sub(r"\s+", "-", s)
+    s = re.sub(r"-+", "-", s)
+    s = re.sub(r"[^a-z0-9\-]+", "", s)
+    return s.strip("-")
+
+def _rule_to_mdc(rule: Dict[str, Any]) -> str:
+    """
+    Render a Cursor MDC rule from our JSON rule object.
+    Maps:
+      - description -> frontmatter.description
+      - matches     -> frontmatter.globs (unless workspace)
+      - workspace   -> frontmatter.alwaysApply: true
+      - content     -> markdown body (verbatim)
+    """
+    desc = (rule.get("description") or rule.get("name") or "").strip()
+    matches = list(dict.fromkeys(rule.get("matches", [])))  # unique, stable order
+    body = (rule.get("content") or "").rstrip() + "\n"
+
+    fm_lines: List[str] = ["---"]
+    if desc:
+        # If desc contains quotes/colons, keep it simple (no YAML escaping needed for plain text)
+        fm_lines.append(f"description: {desc}")
+    if rule.get("name", "").startswith(WORKSPACE_PREFIX):
+        fm_lines.append("alwaysApply: true")
+    elif matches:
+        fm_lines.append("globs:")
+        for g in matches:
+            # quote globs to be safe in YAML
+            fm_lines.append(f'  - "{g}"')
+    fm_lines.append("---")
+
+    return "\n".join(fm_lines) + "\n\n" + body
 
 def write_cursor_rules(outdir: pathlib.Path, rules: List[Dict[str, Any]]) -> None:
-    """Write Cursor rules JSON under outdir/.cursor/rules/ in deterministic order."""
+    """Write Cursor rules as .mdc files under outdir/.cursor/rules/ in deterministic order."""
     rules_dir = pathlib.Path(outdir) / ".cursor" / "rules"
     rules_dir.mkdir(parents=True, exist_ok=True)
     for rule in sorted(rules, key=lambda r: r["name"].lower()):
-        fname = rule["name"].lower().replace(" ", "-").replace("/", "-") + ".json"
-        with open(rules_dir / fname, "w", encoding="utf-8") as f:
-            json.dump(rule, f, indent=2, ensure_ascii=False)
+        fname = _slugify(rule["name"]) + ".mdc"
+        (rules_dir / fname).write_text(_rule_to_mdc(rule), encoding="utf-8")
+
+# ---------- Claude/Gemini prompt emission ----------
 
 def _build_system_prompt(rules: List[Dict[str, Any]]) -> str:
     """Workspace first, then each adapter as H1 sections. Adds trailing newline."""
@@ -66,6 +114,8 @@ def write_system_prompt(outdir: pathlib.Path, rules: List[Dict[str, Any]]) -> No
     outdir.mkdir(parents=True, exist_ok=True)
     (outdir / "system-prompt.txt").write_text(_build_system_prompt(rules), encoding="utf-8")
 
+# ---------- Hashing & main ----------
+
 def sha256_dir(path: pathlib.Path) -> str:
     """SHA-256 of all files under path (sorted), excluding no files; compute before manifest write."""
     h = hashlib.sha256()
@@ -75,11 +125,6 @@ def sha256_dir(path: pathlib.Path) -> str:
     return h.hexdigest()
 
 def main() -> None:
-    # ap = argparse.ArgumentParser()
-    # ap.add_argument("--editor", choices=["cursor", "claude", "gemini"], default="cursor")
-    # ap.add_argument("--org", default=None)
-    # ap.add_argument("--project", default=None)
-    # ap.add_argument("--out", default=None, help="Output directory (defaults to out/<editor>)")
     ap = argparse.ArgumentParser(
         description="Build polyglot AI rule sets and system prompts (Cursor, Claude, Gemini)."
     )
@@ -87,7 +132,7 @@ def main() -> None:
         "--editor",
         choices=["cursor", "claude", "gemini"],
         default="cursor",
-        help="Editor output target (cursor: JSON rules, claude/gemini: system prompt). Default: cursor.",
+        help="Editor output target (cursor: .mdc rules, claude/gemini: system prompt). Default: cursor.",
     )
     ap.add_argument(
         "--org",
@@ -124,7 +169,7 @@ def main() -> None:
     # Materialize list after overlays (deterministic sort by name for all emitters)
     rules: List[Dict[str, Any]] = sorted(rules_by_name.values(), key=lambda r: r["name"].lower())
 
-    # Fresh outdir
+    # Fresh outdir (default to out/<editor>)
     outdir = pathlib.Path(args.out or f"out/{args.editor}")
     if outdir.exists():
         shutil.rmtree(outdir)

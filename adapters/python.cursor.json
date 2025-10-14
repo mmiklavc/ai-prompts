@@ -6,5 +6,5 @@
     "pyproject.toml",
     "requirements*.txt"
   ],
-  "content": "# Python Adapter\n\n**Style & typing**: PEP 8, PEP 257 docstrings, type hints; mypy (strict on touched modules); prefer dataclasses.\n**Testing**: pytest with fixtures/parametrize; tmp_path/monkeypatch; avoid real network/disk I/O.\n**Lint/Format/Type**: ruff, black, mypy.\n**Runbook**\n```\nruff check .\nblack .\nmypy .\npytest -q\n```"
+  "content": "# Python Adapter\n\n**Style & Typing**\n- PEP 8 style; PEP 257 docstrings; prefer type hints; dataclasses for simple data containers; prefer pure functions and explicit dependencies.\n\n**Testing**\n- `pytest` with fixtures/parametrize; avoid real network/disk I/O; use `tmp_path`/`monkeypatch`; deterministic seeds.\n\n**Formatting / Lint / Types**\n- `ruff check --fix`, `ruff format` (or `black`), `mypy` (strict on touched modules).\n\n**Runbook**\n```\nruff check . --fix\nruff format .\nmypy .\npytest -q\n```\n\n**Security & Performance**\n- Validate inputs; avoid eval/exec; be careful with YAML/JSON loaders; use timeouts for network I/O.\n- Profile with `cProfile`/`py-spy` when relevant.\n\n**References**\n- PEP 8 — https://peps.python.org/pep-0008/\n- Pytest docs — https://docs.pytest.org/\n- Mypy docs — https://mypy.readthedocs.io/\n"
 }

@@ -6,5 +6,5 @@
     "Chart.yaml",
     "values*.yaml"
   ],
-  "content": "# Helm Adapter\n\n**Guidelines**: sane chart structure; values via `values.yaml`; no secrets committed; document required values.\n**Validate/Templates**\n```\nhelm lint ./charts/<name>\nhelm template ./charts/<name> --debug --dry-run\n```\nRecommend schema validation/kubeconform if present."
+  "content": "# Helm Adapter\n\n**Guidelines**\n- Sane chart structure; values via `values.yaml`; document required values; do not commit secrets; prefer templates that are explicit and minimal.\n\n**Validate/Templates**\n```\nhelm lint ./charts/<name>\nhelm template ./charts/<name> --debug --dry-run\n```\n\n**Schema / Kube Validation**\n- Use values schema (`values.schema.json`) and/or kubeconform if present.\n\n**References**\n- Helm Docs — https://helm.sh/docs/\n- Kubeconform — https://github.com/yannh/kubeconform\n"
 }

@@ -5,5 +5,5 @@
     "**/*.json",
     "**/*.schema.json"
   ],
-  "content": "# JSON Adapter\n\n**Rules**: RFC 8259 compliance; define JSON Schema (2020-12) for contracts; keep schemas near producers.\n**Runbook**\n```\njq -e . <file.json> > /dev/null\n# run the project's schema validator for *.schema.json if configured\n```"
+  "content": "# JSON Adapter\n\n**Rules**\n- RFC 8259 compliance; define JSON Schema (2020-12) for contracts; keep schemas near producers; stable ordering for diffs.\n\n**Runbook**\n```\njq -e . <file.json> > /dev/null\n# run the project's schema validator for *.schema.json if configured\n```\n\n**References**\n- RFC 8259 — https://www.rfc-editor.org/rfc/rfc8259\n- JSON Schema — https://json-schema.org/draft/2020-12/json-schema-validation.html\n- jq Manual — https://stedolan.github.io/jq/manual/\n"
 }
